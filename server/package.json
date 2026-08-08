@@ -43,6 +43,7 @@
     "nodemailer": "^8.0.5",
     "pdf-parse": "^1.1.1",
     "pdfkit": "^0.18.0",
+    "resend": "^6.18.1",
     "swagger-jsdoc": "^6.2.8",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.9.3",
