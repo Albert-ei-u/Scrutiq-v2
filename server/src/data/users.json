@@ -1,0 +1,24 @@
+[
+  {
+    "id": "USR-217",
+    "fullName": "ISHYA RUGEMA Achille",
+    "email": "ishyarugemachille4@gmail.com",
+    "passwordHash": "achille",
+    "companyName": "Marecom",
+    "isVerified": false,
+    "role": "recruiter",
+    "createdAt": "2026-04-08T15:15:04.562Z",
+    "updatedAt": "2026-04-08T15:15:04.562Z"
+  },
+  {
+    "id": "USR-356",
+    "fullName": "IHIRWE BORA Aubeline",
+    "email": "bora@gmail.com",
+    "passwordHash": "bora",
+    "companyName": "bora",
+    "isVerified": false,
+    "role": "recruiter",
+    "createdAt": "2026-04-08T17:21:22.298Z",
+    "updatedAt": "2026-04-08T17:21:22.298Z"
+  }
+]

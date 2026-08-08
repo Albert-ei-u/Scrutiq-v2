@@ -1,0 +1,41 @@
+[
+  {
+    "candidateId": "APP-EXT-844",
+    "matchScore": 85,
+    "strengths": [
+      "Relevant educational background (Rwanda Coding Academy - Software Programming focus)",
+      "Strong frontend technical stack (React, Tailwind CSS, HTML, CSS, JavaScript)",
+      "Demonstrated project experience building responsive interfaces",
+      "Bilingual fluency (English and Kinyarwanda)"
+    ],
+    "gaps": [
+      "Currently an A-Level student (2025-2028), implying potential availability constraints",
+      "Limited professional experience outside of internal tools/student projects"
+    ],
+    "finalRecommendation": "Priority Alignment",
+    "reasoning": "The candidate matches the education and technical frontend requirements perfectly. Despite being a student, the technical proficiency in React and responsive UI design aligns well with the Junior Frontend Developer profile, and the candidate meets the language and presentation communication requirements.",
+    "jobId": "JOB-659",
+    "candidateName": "ISHYA RUGEMA Achille's CV",
+    "timestamp": "2026-04-08T17:06:49.941Z",
+    "screeningId": "SCR-7043"
+  },
+  {
+    "candidateId": "APP-EXT-153",
+    "matchScore": 95,
+    "strengths": [
+      "Extensive diversity in programming languages (JavaScript, TypeScript, PHP, Python, C/C++)",
+      "Formal education in a specialized software development program (TVET Web Development)",
+      "Strong demonstrated presentation and technical communication skills",
+      "Hands-on experience with modern frontend frameworks (Next.js, React, Tailwind)"
+    ],
+    "gaps": [
+      "Currently pursuing education (candidate is a student, though this is typical for a Junior role)"
+    ],
+    "finalRecommendation": "Priority Alignment",
+    "reasoning": "The candidate perfectly matches all criteria: they are enrolled in a specialized software development program, show deep language diversity, and provide documented evidence of high-level presentation and communication skills.",
+    "jobId": "JOB-659",
+    "candidateName": "niyonshuti",
+    "timestamp": "2026-04-08T17:12:42.164Z",
+    "screeningId": "SCR-1157"
+  }
+]

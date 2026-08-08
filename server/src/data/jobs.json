@@ -1,0 +1,21 @@
+[
+  {
+    "applicantsCount": 0,
+    "status": "Active",
+    "title": "Junior Frontend developer",
+    "department": "Software Development",
+    "location": "Kigali, Rwanda",
+    "description": "To qualify for this job the person applying must have studied in a school that features Software development especially in frontend development with a deversity in the languages they use. They must also be fluent and show presentation skills.\n",
+    "id": "JOB-659"
+  },
+  {
+    "applicantsCount": 0,
+    "status": "Active",
+    "title": "Unique Job for Ishya",
+    "department": "Engineering",
+    "location": "Kigali",
+    "description": "This job should only be visible to Ishya.",
+    "ownerId": "USR-217",
+    "id": "JOB-484"
+  }
+]

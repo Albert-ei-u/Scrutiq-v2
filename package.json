@@ -1,0 +1,31 @@
+{
+  "name": "umurava-2026",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "migrate": "npm run migrate --prefix server",
+    "frontend": "npm run dev --prefix client",
+    "backend": "npm run dev --prefix server",
+    "dev": "concurrently \"npm run backend\" \"npm run frontend\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/albert-ei-u/umurava-project-.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/albert-ei-u/umurava-project-/issues"
+  },
+  "homepage": "https://github.com/albert-ei-u/umurava-project-#readme",
+  "dependencies": {
+    "concurrently": "^9.2.1",
+    "lucide-react": "^1.7.0",
+    "mongodb": "^7.5.0",
+    "nodemon": "^3.1.14"
+  }
+}

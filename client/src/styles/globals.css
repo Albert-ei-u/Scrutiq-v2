@@ -1,0 +1,113 @@
+@import "tailwindcss";
+
+:root {
+  --stq-blue: #0866ff;
+  --stq-blue-hover: #1877f2;
+  --stq-blue-active: #166fe5;
+  --stq-dark: #050505;
+  --stq-muted: #65676b;
+  --stq-border: #ced0d4;
+  --stq-bg: #f0f2f5;
+  --stq-surface: #ffffff;
+  --stq-hover: #f2f2f2;
+}
+
+.dark {
+  --stq-blue: #2e89ff;
+  --stq-blue-hover: #4e9bff;
+  --stq-blue-active: #1d5fb9;
+  --stq-dark: #ffffff;
+
+  --stq-muted: #b0b3b8;
+  --stq-border: #3e4042;
+  --stq-bg: #18191a;
+  --stq-surface: #242526;
+  --stq-hover: #3a3b3c;
+}
+
+@theme {
+  --color-scrutiq-blue: var(--stq-blue);
+  --color-scrutiq-blue-hover: var(--stq-blue-hover);
+  --color-scrutiq-blue-active: var(--stq-blue-active);
+  --color-scrutiq-dark: var(--stq-dark);
+  --color-scrutiq-muted: var(--stq-muted);
+  --color-scrutiq-border: var(--stq-border);
+  --color-scrutiq-bg: var(--stq-bg);
+  --color-scrutiq-surface: var(--stq-surface);
+  --color-scrutiq-hover: var(--stq-hover);
+  --font-jakarta: "Plus Jakarta Sans", sans-serif;
+}
+
+:root {
+  --stq-logo-filter: invert(0);
+}
+
+.dark {
+  --stq-logo-filter: invert(1);
+}
+
+@layer base {
+  html {
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply font-jakarta bg-scrutiq-bg text-scrutiq-muted antialiased text-[15px] leading-relaxed;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-jakarta font-black tracking-tighter text-scrutiq-dark;
+  }
+
+  /* Interaction Presets */
+  .hover-lift {
+    @apply transition-all duration-300 ease-out hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-scrutiq-blue/10 active:scale-[0.98];
+  }
+
+  ::selection {
+    @apply bg-scrutiq-blue/20 text-scrutiq-blue;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-scrutiq-blue hover:bg-scrutiq-blue-hover active:bg-scrutiq-blue-active text-white px-5 py-2.5 rounded-lg font-bold text-sm transition-all shadow-sm active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply bg-scrutiq-surface border border-scrutiq-border hover:bg-scrutiq-bg active:bg-scrutiq-border/30 text-scrutiq-dark px-5 py-2.5 rounded-lg font-bold text-sm transition-all active:scale-95;
+  }
+
+  .admin-card {
+    @apply bg-scrutiq-surface border border-scrutiq-border rounded-xl overflow-hidden transition-all;
+  }
+
+  .status-pill {
+    @apply px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border transition-colors;
+  }
+
+  .form-input {
+    @apply w-full bg-scrutiq-surface border border-scrutiq-border rounded-lg py-2.5 px-4 text-sm text-scrutiq-dark focus:border-scrutiq-blue focus:ring-4 focus:ring-scrutiq-blue/10 outline-none transition-all placeholder:text-scrutiq-muted/50;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-scrutiq-border rounded-full hover:bg-scrutiq-muted transition-colors;
+}
