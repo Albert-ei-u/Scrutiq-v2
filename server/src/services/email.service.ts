@@ -2,25 +2,25 @@ import nodemailer, {
   type SendMailOptions,
   type Transporter,
 } from "nodemailer";
+import axios from "axios";
 import dotenv from "dotenv";
-import { Resend } from "resend";
 
 dotenv.config();
 
 class EmailService {
   private transporter?: Transporter;
-  private resend?: Resend;
+  private brevoApiKey?: string;
   private readonly isProduction = process.env.NODE_ENV === "production";
 
   constructor() {
     if (this.isProduction) {
-      if (!process.env.RESEND_API_KEY || !process.env.EMAIL_FROM) {
+      if (!process.env.BREVO_API_KEY || !process.env.EMAIL_FROM) {
         throw new Error(
-          "RESEND_API_KEY and EMAIL_FROM are required in production.",
+          "BREVO_API_KEY and EMAIL_FROM are required in production.",
         );
       }
 
-      this.resend = new Resend(process.env.RESEND_API_KEY);
+      this.brevoApiKey = process.env.BREVO_API_KEY;
       return;
     }
 
@@ -54,38 +54,62 @@ class EmailService {
   }
 
   private async dispatch(mail: SendMailOptions): Promise<void> {
-    if (this.resend) {
-      const to = Array.isArray(mail.to)
+    if (this.brevoApiKey) {
+      const recipients = Array.isArray(mail.to)
         ? mail.to.map(String)
         : typeof mail.to === "string"
-          ? mail.to
-          : undefined;
+          ? [mail.to]
+          : [];
 
-      const from =
-        typeof mail.from === "string" ? mail.from : String(mail.from ?? "");
+      const from = typeof mail.from === "string" ? mail.from : "";
+      const senderName =
+        from.split("<")[0].replace(/"/g, "").trim() || "Scrutiq";
+
       const subject =
         typeof mail.subject === "string"
           ? mail.subject
           : String(mail.subject ?? "");
+
       const html =
         typeof mail.html === "string" ? mail.html : String(mail.html ?? "");
 
-      if (!to || !from || !subject || !html) {
-        throw new Error("Email recipient, sender, subject, or HTML is missing.");
+      if (!recipients.length || !subject || !html) {
+        throw new Error("Email recipient, subject, or HTML is missing.");
       }
 
-      const { error } = await this.resend.emails.send({
-        from,
-        to,
-        subject,
-        html,
-      });
+      try {
+        await axios.post(
+          "https://api.brevo.com/v3/smtp/email",
+          {
+            sender: {
+              name: senderName,
+              email: process.env.EMAIL_FROM,
+            },
+            to: recipients.map((email) => ({ email })),
+            subject,
+            htmlContent: html,
+          },
+          {
+            headers: {
+              "api-key": this.brevoApiKey,
+              "content-type": "application/json",
+              accept: "application/json",
+            },
+          },
+        );
 
-      if (error) {
-        throw new Error(error.message);
+        return;
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          throw new Error(
+            error.response?.data?.message ||
+              error.response?.data?.code ||
+              error.message,
+          );
+        }
+
+        throw error;
       }
-
-      return;
     }
 
     await this.transporter!.sendMail(mail);
@@ -109,7 +133,7 @@ class EmailService {
           </h1>
 
           <p style="text-align: center; color: #64748B; line-height: 1.6;">
-            Use the verification code below to activate your recruiter account.
+            Use the secure verification code below to activate your recruiter account.
           </p>
 
           <div style="background: #F8FAFC; border: 1px solid #F1F5F9; border-radius: 20px; padding: 32px; text-align: center; margin: 32px 0;">
@@ -129,7 +153,7 @@ class EmailService {
       await this.dispatch(mailOptions);
       console.log(`[EMAIL] Verification code dispatched to ${email}`);
     } catch (error: any) {
-      console.error("[EMAIL ERROR] Verification email dispatch failed:", error);
+      console.error("[EMAIL ERROR] Verification dispatch failed:", error);
       throw new Error(`Failed to send verification email: ${error.message}`);
     }
   }
@@ -152,7 +176,7 @@ class EmailService {
       .join("");
 
     const feedbackFooter = recruiterEmail
-      ? `Any questions or feedback may be sent to ${recruiterEmail}.`
+      ? `Any question or feedback may be sent to ${recruiterEmail}.`
       : "Reply to this message to speak with our technical support team.";
 
     const mailOptions: SendMailOptions = {
@@ -160,7 +184,7 @@ class EmailService {
       to: email,
       subject,
       html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #E2E8F0; border-radius: 24px; overflow: hidden; color: #1E293B;">
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #E2E8F0; border-radius: 24px; overflow: hidden; background: #FFFFFF;">
           <div style="background: #0F172A; padding: 32px; text-align: center;">
             <div style="font-size: 24px; font-weight: 800; color: #FFFFFF;">
               Scrutiq<span style="color: #3B82F6;">.</span>
