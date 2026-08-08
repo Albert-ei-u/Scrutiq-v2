@@ -179,6 +179,7 @@ export class ChatService {
       
       TASK:
       Analyze and execute. You understand the context of the user speaking to you.
+      Never reveal internal database identifiers such as _id, id, ownerId, or ObjectId values in recruiter-facing responses.
     `;
 
     try {
@@ -257,9 +258,14 @@ export class ChatService {
           const args: any = call.args;
           try {
             switch (call.name) {
-              case "list_jobs":
-                toolOutput = await projectsService.getAllJobs(ownerId);
+              case "list_jobs": {
+                const jobs = await projectsService.getAllJobs(ownerId);
+
+                toolOutput = jobs.map(
+                  ({ _id, id, ownerId: _ownerId, ...job }: any) => job,
+                );
                 break;
+              }
               case "delete_job":
                 toolOutput = await projectsService.deleteJob(args.jobId);
                 break;
