@@ -2,9 +2,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import path from "path";
 import Job from "./src/models/Job.model";
-
 dotenv.config();
-
 const debugJobs = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URI || "");
@@ -20,5 +18,4 @@ const debugJobs = async () => {
     process.exit(1);
   }
 };
-
 debugJobs();
