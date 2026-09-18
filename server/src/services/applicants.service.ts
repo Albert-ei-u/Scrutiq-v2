@@ -34,16 +34,18 @@ class ApplicantsService {
     
     // Efficiently batch load screenings to prevent N+1 queries
     const allScreenings = await Screening.find({
-      candidateId: { $in: candidateIds }
-    }).lean();
+      candidateId: { $in: candidateIds },
+    }).sort({ createdAt: -1 }).lean();
+
+    const latestScreeningByCandidate = new Map<string, any>();
+    for (const screening of allScreenings) {
+      if (!latestScreeningByCandidate.has(screening.candidateId)) {
+        latestScreeningByCandidate.set(screening.candidateId, screening);
+      }
+    }
 
     const results = applicants.map((app: any) => {
-      const candidateScreenings = allScreenings.filter(s => s.candidateId === app._id.toString());
-      
-      // Sort screenings by date to find the most recent evaluation
-      const latestScreening = candidateScreenings.length > 0
-        ? candidateScreenings.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0]
-        : null;
+      const latestScreening = latestScreeningByCandidate.get(app._id.toString()) || null;
 
       return {
         ...app,

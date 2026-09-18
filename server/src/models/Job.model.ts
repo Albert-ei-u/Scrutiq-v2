@@ -27,4 +27,7 @@ const JobSchema: Schema = new Schema(
   { timestamps: true }
 );
 
+JobSchema.index({ ownerId: 1, createdAt: -1 });
+JobSchema.index({ ownerId: 1, department: 1 });
+
 export default mongoose.model<IJob>("Job", JobSchema);

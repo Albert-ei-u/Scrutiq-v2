@@ -37,4 +37,8 @@ const ScreeningSchema: Schema = new Schema(
   { timestamps: true }
 );
 
+ScreeningSchema.index({ jobId: 1 });
+ScreeningSchema.index({ candidateId: 1, createdAt: -1 });
+ScreeningSchema.index({ jobId: 1, updatedAt: -1 });
+
 export default mongoose.model<IScreening>("Screening", ScreeningSchema);
