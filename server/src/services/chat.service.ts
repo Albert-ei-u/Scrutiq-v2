@@ -14,7 +14,22 @@ import Job from "../models/Job.model";
 
 dotenv.config();
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
+// Support a pool of Gemini keys. Keep the legacy singular variable working so
+// existing deployments do not need to change immediately.
+const geminiApiKeys = (
+  process.env.GEMINI_API_KEYS || process.env.GEMINI_API_KEY || ""
+)
+  .split(",")
+  .map((key) => key.trim())
+  .filter(Boolean);
+let nextGeminiApiKeyIndex = 0;
+
+const getNextGeminiApiKey = () => {
+  if (geminiApiKeys.length === 0) return "";
+  const key = geminiApiKeys[nextGeminiApiKeyIndex % geminiApiKeys.length];
+  nextGeminiApiKeyIndex = (nextGeminiApiKeyIndex + 1) % geminiApiKeys.length;
+  return key;
+};
 
 const CHAT_CONFIG = {
   systemInstruction: {
@@ -146,7 +161,7 @@ export class ChatService {
   constructor() {}
 
   async handleMessage(message: string, history: any[], ownerId: string) {
-    if (!process.env.GEMINI_API_KEY) throw new Error("API Key Missing.");
+    if (geminiApiKeys.length === 0) throw new Error("API Key Missing.");
 
     const formattedHistory = (history || [])
       .filter((h) => h && h.role && h.content)
@@ -183,7 +198,12 @@ export class ChatService {
     `;
 
     try {
-      return await this.executeStatelessCycle(prompt, ownerId);
+      return await this.executeStatelessCycle(
+        prompt,
+        ownerId,
+        1,
+        getNextGeminiApiKey(),
+      );
     } catch (error: any) {
       console.error("[CHAT AGENT FAULT]:", error.message);
       const msg = error.message?.toLowerCase() || "";
@@ -220,11 +240,12 @@ export class ChatService {
     prompt: string,
     ownerId: string,
     attempt: number = 1,
+    apiKey: string = getNextGeminiApiKey(),
   ): Promise<any> {
     const models = ["gemini-flash-latest", "gemini-3.1-flash-lite-preview"];
     const activeModelName = attempt > 2 ? models[1] : models[0];
 
-    const model = genAI.getGenerativeModel({
+    const model = new GoogleGenerativeAI(apiKey).getGenerativeModel({
       model: activeModelName,
       tools: CHAT_CONFIG.tools,
       safetySettings: CHAT_CONFIG.safetySettings as any,
@@ -337,8 +358,16 @@ export class ChatService {
         content: response.text() || "Action performed successfully.",
       };
     } catch (error: any) {
-      if (attempt < 3)
-        return this.executeStatelessCycle(prompt, ownerId, attempt + 1);
+      if (attempt < 3) {
+        // Rotate to another key before retrying. This helps when a key is
+        // rate-limited or has exhausted its quota.
+        return this.executeStatelessCycle(
+          prompt,
+          ownerId,
+          attempt + 1,
+          getNextGeminiApiKey(),
+        );
+      }
       throw error;
     }
   }
