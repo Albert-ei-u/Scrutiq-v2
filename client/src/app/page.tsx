@@ -167,6 +167,73 @@ export default function LandingPage() {
             </motion.div>
           ))}
         </div>
+
+        {/* Product Story */}
+        <section className="pt-12 pb-8 text-left">
+          <div className="bg-scrutiq-surface/70 backdrop-blur-xl border border-scrutiq-border rounded-[2.5rem] p-8 md:p-12 shadow-xl shadow-scrutiq-blue/5">
+            <div className="grid lg:grid-cols-[1fr_1.2fr] gap-10 lg:gap-16 items-center">
+              <div className="space-y-5">
+                <p className="text-[10px] font-black tracking-[0.2em] text-scrutiq-blue uppercase">
+                  A clearer hiring workflow
+                </p>
+                <h2 className="text-3xl md:text-4xl font-black text-scrutiq-dark tracking-tighter leading-tight">
+                  Turn every resume into a confident decision.
+                </h2>
+                <p className="text-sm md:text-base text-scrutiq-muted font-medium leading-relaxed">
+                  Scrutiq brings your jobs, applicants, and screening insights
+                  into one focused workspace, helping your team spend less
+                  time sorting information and more time meeting the right
+                  people.
+                </p>
+              </div>
+
+              <div className="grid sm:grid-cols-3 gap-4">
+                {[
+                  {
+                    number: "01",
+                    icon: Briefcase,
+                    title: "Create a role",
+                    desc: "Define the skills and criteria that matter.",
+                  },
+                  {
+                    number: "02",
+                    icon: Search,
+                    title: "Review talent",
+                    desc: "Bring resumes together in one searchable registry.",
+                  },
+                  {
+                    number: "03",
+                    icon: ShieldCheck,
+                    title: "Screen smarter",
+                    desc: "Compare candidates with consistent insights.",
+                  },
+                ].map((step) => (
+                  <div
+                    key={step.number}
+                    className="bg-scrutiq-bg/70 border border-scrutiq-border rounded-2xl p-5 space-y-4 hover:border-scrutiq-blue/40 transition-colors"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="size-10 rounded-xl bg-scrutiq-blue/10 text-scrutiq-blue flex items-center justify-center">
+                        <step.icon className="size-5" />
+                      </div>
+                      <span className="text-[10px] font-black tracking-widest text-scrutiq-muted/50">
+                        {step.number}
+                      </span>
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-black text-scrutiq-dark">
+                        {step.title}
+                      </h3>
+                      <p className="mt-2 text-xs text-scrutiq-muted font-medium leading-relaxed">
+                        {step.desc}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
       </motion.div>
 
       <footer className="mt-32 w-full max-w-5xl border-t border-scrutiq-border/30 pt-12 pb-12 flex flex-col md:flex-row items-center justify-between gap-6 px-4">
