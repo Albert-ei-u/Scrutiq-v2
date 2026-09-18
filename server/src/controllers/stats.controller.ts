@@ -17,26 +17,26 @@ class StatsController {
 
       // Determine applicable jobs for the owner
       const userJobsQuery = ownerId ? { ownerId } : {};
-      const totalJobs = await Job.countDocuments(userJobsQuery);
-      const totalApplicants = await Applicant.countDocuments(userJobsQuery);
-      
+      const [totalJobs, totalApplicants, userJobs] = await Promise.all([
+        Job.countDocuments(userJobsQuery),
+        Applicant.countDocuments(userJobsQuery),
+        Job.find(userJobsQuery).select("id title department").lean(),
+      ]);
+
       // We must isolate screenings to only jobs owned by this recruiter
-      const userJobs = await Job.find(userJobsQuery).select('id _id title department');
       const jobIds = userJobs.map(j => (j.id || j._id).toString());
       
       const screeningQuery = jobIds.length > 0 ? { jobId: { $in: jobIds } } : { _id: null };
-      const totalScreenings = await Screening.countDocuments(screeningQuery);
-
-      // 2. Job Distribution
-      const jobDist = await Job.aggregate([
-        { $match: userJobsQuery },
-        { $group: { _id: "$department", count: { $sum: 1 } } }
-      ]);
-
-      // 3. Screening Accuracy
-      const avgScore = await Screening.aggregate([
-        { $match: screeningQuery },
-        { $group: { _id: null, avg: { $avg: "$matchScore" } } }
+      const [totalScreenings, jobDist, avgScore] = await Promise.all([
+        Screening.countDocuments(screeningQuery),
+        Job.aggregate([
+          { $match: userJobsQuery },
+          { $group: { _id: "$department", count: { $sum: 1 } } },
+        ]),
+        Screening.aggregate([
+          { $match: screeningQuery },
+          { $group: { _id: null, avg: { $avg: "$matchScore" } } },
+        ]),
       ]);
 
       // 4. Activity Over Time (Dynamic Range)

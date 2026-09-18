@@ -11,15 +11,21 @@ class JobsService {
 
     const jobs = await Job.find({ ownerId }).sort({ createdAt: -1 }).lean();
 
-    // Add dynamic count from screenings
-    const results = await Promise.all(
-      jobs.map(async (job: any) => {
-        const count = await Screening.countDocuments({
-          jobId: job._id.toString(),
-        });
-        return { ...job, applicantsCount: count };
-      }),
+    if (jobs.length === 0) return [];
+
+    // Load every count in one aggregation instead of one query per job.
+    const counts = await Screening.aggregate([
+      { $match: { jobId: { $in: jobs.map((job: any) => job._id.toString()) } } },
+      { $group: { _id: "$jobId", count: { $sum: 1 } } },
+    ]);
+    const countByJobId = new Map(
+      counts.map((item: { _id: string; count: number }) => [item._id, item.count]),
     );
+
+    const results = jobs.map((job: any) => ({
+      ...job,
+      applicantsCount: countByJobId.get(job._id.toString()) || 0,
+    }));
 
     return results;
   }

@@ -169,4 +169,6 @@ const ApplicantSchema: Schema = new Schema(
   { timestamps: true }
 );
 
+ApplicantSchema.index({ ownerId: 1, createdAt: -1 });
+
 export default mongoose.model<IApplicant>("Applicant", ApplicantSchema);

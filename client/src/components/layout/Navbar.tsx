@@ -21,7 +21,6 @@ import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "@/lib/toast";
-import api from "@/lib/api";
 import { useNotifications } from "@/context/NotificationContext";
 import { useTheme } from "@/context/ThemeContext";
 
@@ -87,18 +86,6 @@ const Navbar = ({ onMenuClick }: NavbarProps) => {
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
-
-    // Fetch dynamic notifications
-    const fetchNotifications = async () => {
-      try {
-        const response = await api.get("/stats");
-        const stats = response.data.data;
-        setNotifications(stats.recentActivity || []);
-      } catch (error) {
-        setNotifications([]);
-      }
-    };
-    fetchNotifications();
 
     const handleProfileSync = () => {
       const storedUser = localStorage.getItem("user");
