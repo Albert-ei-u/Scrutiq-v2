@@ -169,10 +169,39 @@ export default function LandingPage() {
         </div>
 
         {/* Product Story */}
-        <section className="pt-12 pb-8 text-left">
-          <div className="bg-scrutiq-surface/70 backdrop-blur-xl border border-scrutiq-border rounded-[2.5rem] p-8 md:p-12 shadow-xl shadow-scrutiq-blue/5">
-            <div className="grid lg:grid-cols-[1fr_1.2fr] gap-10 lg:gap-16 items-center">
-              <div className="space-y-5">
+        <motion.section
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.25 }}
+          variants={{
+            hidden: { opacity: 0, y: 36 },
+            visible: {
+              opacity: 1,
+              y: 0,
+              transition: { duration: 0.7, ease: "easeOut" },
+            },
+          }}
+          className="pt-12 pb-8 text-left"
+        >
+          <div className="bg-scrutiq-surface/70 backdrop-blur-xl border border-scrutiq-border rounded-[2.5rem] p-8 md:p-12 shadow-xl shadow-scrutiq-blue/5 relative overflow-hidden group/workflow">
+            <motion.div
+              aria-hidden="true"
+              className="absolute -right-24 -top-24 size-64 rounded-full bg-scrutiq-blue/10 blur-3xl"
+              animate={{ scale: [1, 1.15, 1], opacity: [0.35, 0.65, 0.35] }}
+              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+            />
+            <div className="grid lg:grid-cols-[1fr_1.2fr] gap-10 lg:gap-16 items-center relative z-10">
+              <motion.div
+                className="space-y-5"
+                variants={{
+                  hidden: { opacity: 0, x: -24 },
+                  visible: {
+                    opacity: 1,
+                    x: 0,
+                    transition: { delay: 0.15, duration: 0.6 },
+                  },
+                }}
+              >
                 <p className="text-[10px] font-black tracking-[0.2em] text-scrutiq-blue uppercase">
                   A clearer hiring workflow
                 </p>
@@ -187,7 +216,17 @@ export default function LandingPage() {
                 </p>
               </div>
 
-              <div className="grid sm:grid-cols-3 gap-4">
+              <div className="relative grid sm:grid-cols-3 gap-4">
+                <motion.div
+                  aria-hidden="true"
+                  className="hidden sm:block absolute top-10 left-[16%] right-[16%] h-px overflow-hidden bg-scrutiq-blue/15"
+                >
+                  <motion.div
+                    className="h-full w-1/3 bg-gradient-to-r from-transparent via-scrutiq-blue to-transparent"
+                    animate={{ x: ["-100%", "300%"] }}
+                    transition={{ duration: 2.8, repeat: Infinity, ease: "linear" }}
+                  />
+                </motion.div>
                 {[
                   {
                     number: "01",
@@ -207,15 +246,33 @@ export default function LandingPage() {
                     title: "Screen smarter",
                     desc: "Compare candidates with consistent insights.",
                   },
-                ].map((step) => (
-                  <div
+                ].map((step, index) => (
+                  <motion.div
                     key={step.number}
-                    className="bg-scrutiq-bg/70 border border-scrutiq-border rounded-2xl p-5 space-y-4 hover:border-scrutiq-blue/40 transition-colors"
+                    variants={{
+                      hidden: { opacity: 0, y: 24, scale: 0.96 },
+                      visible: {
+                        opacity: 1,
+                        y: 0,
+                        scale: 1,
+                        transition: {
+                          delay: 0.25 + index * 0.14,
+                          duration: 0.55,
+                          ease: "easeOut",
+                        },
+                      },
+                    }}
+                    whileHover={{ y: -8, scale: 1.03 }}
+                    className="bg-scrutiq-bg/70 border border-scrutiq-border rounded-2xl p-5 space-y-4 hover:border-scrutiq-blue/40 hover:shadow-xl hover:shadow-scrutiq-blue/10 transition-colors relative z-10"
                   >
                     <div className="flex items-center justify-between">
-                      <div className="size-10 rounded-xl bg-scrutiq-blue/10 text-scrutiq-blue flex items-center justify-center">
+                      <motion.div
+                        className="size-10 rounded-xl bg-scrutiq-blue/10 text-scrutiq-blue flex items-center justify-center"
+                        whileHover={{ rotate: 8, scale: 1.12 }}
+                        transition={{ type: "spring", stiffness: 300 }}
+                      >
                         <step.icon className="size-5" />
-                      </div>
+                      </motion.div>
                       <span className="text-[10px] font-black tracking-widest text-scrutiq-muted/50">
                         {step.number}
                       </span>
@@ -228,12 +285,12 @@ export default function LandingPage() {
                         {step.desc}
                       </p>
                     </div>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             </div>
           </div>
-        </section>
+        </motion.section>
       </motion.div>
 
       <footer className="mt-32 w-full max-w-5xl border-t border-scrutiq-border/30 pt-12 pb-12 flex flex-col md:flex-row items-center justify-between gap-6 px-4">
