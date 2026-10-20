@@ -4,25 +4,37 @@ import dotenv from "dotenv";
 dotenv.config();
 
 class GeminiService {
-  private genAI: GoogleGenerativeAI;
-  private model: GenerativeModel;
+  private readonly apiKeys: string[];
+  private nextKeyIndex = 0;
 
   constructor() {
-    const apiKey = process.env.GEMINI_API_KEY || "";
-    this.genAI = new GoogleGenerativeAI(apiKey);
-    // Using gemini-flash-latest for production stability
-    this.model = this.genAI.getGenerativeModel({
-      model: "gemini-flash-latest",
-    });
+    // Render environment variables are strings, so a key pool must be split
+    // here as well as in ChatService. Support both names for old deployments.
+    this.apiKeys = (
+      process.env.GEMINI_API_KEYS || process.env.GEMINI_API_KEY || ""
+    )
+      .split(",")
+      .map((key) => key.trim())
+      .filter(Boolean);
+  }
+
+  private getNextApiKey(): string {
+    if (this.apiKeys.length === 0) throw new Error("API Key Missing.");
+    const key = this.apiKeys[this.nextKeyIndex % this.apiKeys.length];
+    this.nextKeyIndex = (this.nextKeyIndex + 1) % this.apiKeys.length;
+    return key;
   }
 
   public async executeWithRetry(
     prompt: string,
     attempt: number = 1,
   ): Promise<any> {
-    const models = ["gemini-flash-latest", "gemini-3.1-flash-lite-preview"];
-    const modelToUse = attempt > 2 ? models[1] : models[0];
-    const activeModel = this.genAI.getGenerativeModel({ model: modelToUse });
+    const models = ["gemini-3.8-flash", "gemini-2.5-flash"];
+    const modelToUse = models[(attempt - 1) % models.length];
+    const apiKey = this.getNextApiKey();
+    const activeModel = new GoogleGenerativeAI(apiKey).getGenerativeModel({
+      model: modelToUse,
+    });
 
     try {
       const result = await activeModel.generateContent(prompt);
@@ -33,8 +45,10 @@ class GeminiService {
         error.message?.includes("demand") ||
         error.message?.includes("limit");
 
-      if (isOverload && attempt < 6) {
-        const delay = 5000 * attempt; // More aggressive backoff (5s, 10s, 15s...)
+      if (isOverload && attempt < Math.max(4, this.apiKeys.length * 2)) {
+        // Keep failover responsive: try another key/model quickly instead of
+        // making the user wait through six long retries.
+        const delay = Math.min(1500 * attempt, 5000);
         console.warn(
           `[AI SERVICE OVERLOAD] Attempt ${attempt} failed for ${modelToUse}. Retrying in ${delay / 1000}s...`,
         );

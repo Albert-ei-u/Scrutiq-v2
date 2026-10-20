@@ -242,8 +242,10 @@ export class ChatService {
     attempt: number = 1,
     apiKey: string = getNextGeminiApiKey(),
   ): Promise<any> {
-    const models = ["gemini-flash-latest", "gemini-3.1-flash-lite-preview"];
-    const activeModelName = attempt > 2 ? models[1] : models[0];
+    // Use generally available Flash models. Preview models can return 503s
+    // during demand spikes even when the API key is valid.
+    const models = ["gemini-3.8-flash", "gemini-2.5-flash"];
+    const activeModelName = models[Math.min(attempt - 1, models.length - 1)];
 
     const model = new GoogleGenerativeAI(apiKey).getGenerativeModel({
       model: activeModelName,
@@ -358,7 +360,7 @@ export class ChatService {
         content: response.text() || "Action performed successfully.",
       };
     } catch (error: any) {
-      if (attempt < 3) {
+      if (attempt < Math.min(4, Math.max(2, geminiApiKeys.length + 1))) {
         // Rotate to another key before retrying. This helps when a key is
         // rate-limited or has exhausted its quota.
         return this.executeStatelessCycle(
