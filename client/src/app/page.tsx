@@ -214,7 +214,7 @@ export default function LandingPage() {
                   time sorting information and more time meeting the right
                   people.
                 </p>
-              </div>
+              </motion.div>
 
               <div className="relative grid sm:grid-cols-3 gap-4">
                 <motion.div
